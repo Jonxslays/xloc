@@ -1,0 +1,16 @@
+[package]
+name = "xloc"
+description = "A fast, multi-threaded line counting utility."
+version = "0.1.0"
+authors = ["Ethan Henderson", "Jonxslays"]
+edition = "2021"
+readme = "README.md"
+homepage = "https://github.com/Jonxslays/xloc"
+repository = "https://github.com/Jonxslays/xloc"
+license = "BSD-3-Clause"
+license-file = "LICENSE"
+include = ["/src"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
