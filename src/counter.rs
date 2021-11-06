@@ -49,20 +49,49 @@ impl Counter {
         Ok(())
     }
 
-    pub fn count_files(&self) -> Result<usize> {
-        self.scan(&self.curdir)?;
-        Ok(self.files.lock().unwrap().len())
-    }
-
-    pub fn count_lines(&self, start: usize, end: usize) -> Result<usize> {
+    fn count_chunk(&self, size: usize, start: usize) -> Result<usize> {
         let mut result = 0;
 
-        for idx in start..end {
+        for idx in start..(start + size) {
             let content = fs::read_to_string(&self.files.lock().unwrap()[idx])?;
             let split: Vec<&str> = content.split("\n").collect();
             result += split.len();
         }
 
         Ok(result)
+    }
+
+    fn generate_workloads(&self, njobs: usize, nfiles: usize) -> Result<Vec<usize>> {
+        let chunk_size = nfiles / njobs;
+        let remainder = nfiles % njobs;
+
+        let mut workloads = vec![chunk_size; njobs];
+
+        for i in 0..remainder {
+            workloads[i] += 1;
+        }
+
+        Ok(workloads)
+    }
+
+    pub fn count_files(&self) -> Result<usize> {
+        self.scan(&self.curdir)?;
+        Ok(self.files.lock().unwrap().len())
+    }
+
+    pub fn count(&self, njobs: usize) -> Result<usize> {
+        let mut total = 0;
+        let nfiles = self.count_files()?;
+        let workloads = self.generate_workloads(njobs, nfiles)?;
+        let mut position = 0;
+
+        for load in workloads {
+            if let Ok(amount) = self.count_chunk(load, position) {
+                total += amount;
+                position += load;
+            }
+        }
+
+        Ok(total)
     }
 }
