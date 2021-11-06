@@ -13,7 +13,7 @@ fn main() {
         }
     }
 
-    let mut counter = counter::Counter::new();
+    let counter = counter::Counter::new();
     match counter.count() {
         Ok(_) => (),
         Err(e) => {
