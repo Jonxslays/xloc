@@ -8,9 +8,13 @@ readme = "README.md"
 homepage = "https://github.com/Jonxslays/xloc"
 repository = "https://github.com/Jonxslays/xloc"
 license = "BSD-3-Clause"
-include = ["/src"]
+include = ["src"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "xloc"
+path = "src/lib/lib.rs"
 
 [dependencies]
 clap = "2.33.3"
