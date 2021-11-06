@@ -54,10 +54,10 @@ impl Counter {
         Ok(self.files.lock().unwrap().len())
     }
 
-    fn count_lines(&self, start: usize, end: usize) -> Result<usize> {
+    pub fn count_lines(&self, start: usize, end: usize) -> Result<usize> {
         let mut result = 0;
 
-        for idx in start..=end {
+        for idx in start..end {
             let content = fs::read_to_string(&self.files.lock().unwrap()[idx])?;
             let split: Vec<&str> = content.split("\n").collect();
             result += split.len();
