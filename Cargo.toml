@@ -1,12 +1,14 @@
 [package]
 name = "xloc"
-description = "A fast, multi-threaded line counting utility."
+description = "A fast, multi-threaded line counting utility written in Rust."
 version = "0.1.0"
 authors = ["Ethan Henderson", "Jonxslays"]
 edition = "2021"
 readme = "README.md"
 homepage = "https://github.com/Jonxslays/xloc"
 repository = "https://github.com/Jonxslays/xloc"
+keywords = ["xloc", "lines", "count", "code"]
+categories = ["command-line-utilities", "Concurrency", "filesystem"]
 license = "BSD-3-Clause"
 include = ["src"]
 

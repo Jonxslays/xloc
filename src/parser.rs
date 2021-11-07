@@ -1,13 +1,11 @@
 use clap::{App, Arg, ArgMatches};
 
 
-#[allow(dead_code)]
 pub struct Parser<'a> {
     pub matches: ArgMatches<'a>
 }
 
 
-#[allow(dead_code)]
 impl<'a> Parser<'a> {
     pub fn new() -> Self {
         let cli = App::new("xloc")

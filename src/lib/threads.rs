@@ -8,9 +8,10 @@ pub fn handle_in_thread(tx: mpsc::Sender<usize>, files: Vec<PathBuf>) -> thread:
         let mut result = 0;
 
         for file in files {
-            let content = fs::read_to_string(file).unwrap();
-            let split: Vec<&str> = content.split("\n").collect();
-            result += split.len();
+            match fs::read_to_string(file) {
+                Ok(s) => result += s.split("\n").count(),
+                _ => (),
+            };
         }
 
         tx.send(result).unwrap();

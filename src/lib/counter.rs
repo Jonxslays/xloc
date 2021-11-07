@@ -4,14 +4,14 @@ use std::io::Result;
 
 
 pub struct Counter {
-    pub curdir: PathBuf,
+    pub dir: PathBuf,
     pub files: Vec<PathBuf>
 }
 
 
 impl Counter {
-    pub fn new(curdir: PathBuf) -> Self {
-        Self { curdir, files: vec![] }
+    pub fn new(dir: PathBuf) -> Self {
+        Self { dir, files: vec![] }
     }
 
     fn scan(&mut self, dir: &PathBuf) -> Result<()> {
@@ -43,7 +43,6 @@ impl Counter {
     pub fn generate_workloads(&self, njobs: usize, nfiles: usize) -> Result<Vec<usize>> {
         let chunk_size = nfiles / njobs;
         let remainder = nfiles % njobs;
-
         let mut workloads = vec![chunk_size; njobs];
 
         for i in 0..remainder {
@@ -54,7 +53,7 @@ impl Counter {
     }
 
     pub fn count_files(&mut self) -> Result<usize> {
-        self.scan(&self.curdir.clone())?;
+        self.scan(&self.dir.clone())?;
         Ok(self.files.len())
     }
 }
