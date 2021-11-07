@@ -2,8 +2,8 @@ use clap::{App, Arg};
 
 
 pub struct Parser {
-    pub jobs: usize,
-    pub path: Vec<String>,
+    pub njobs: usize,
+    pub paths: Vec<String>,
 }
 
 
@@ -29,18 +29,18 @@ impl Parser {
 
         let matches = cli.get_matches();
 
-        let path = matches
+        let paths = matches
             .values_of("path")
             .unwrap()
             .map(|p| p.to_string())
             .collect::<Vec<String>>();
 
-        let jobs = matches
+        let njobs = matches
             .value_of("jobs")
             .unwrap()
             .parse::<usize>()
             .unwrap_or(1);
 
-        Self { jobs, path }
+        Self { njobs, paths }
     }
 }

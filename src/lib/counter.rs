@@ -4,36 +4,40 @@ use std::io::Result;
 
 
 pub struct Counter {
-    pub dir: PathBuf,
+    pub path: PathBuf,
     pub files: Vec<PathBuf>
 }
 
 
 impl Counter {
-    pub fn new(dir: PathBuf) -> Self {
-        Self { dir, files: vec![] }
+    pub fn new(path: PathBuf) -> Self {
+        Self { path, files: vec![] }
     }
 
-    fn scan(&mut self, dir: &PathBuf) -> Result<()> {
-        if dir.is_dir() {
-            for entry in fs::read_dir(dir)?
-                .filter(|d| {
-                    for exclude in vec!["target", ".git"] {
-                        let path = d.as_ref().unwrap().path();
+    fn scan(&mut self, path: &PathBuf) -> Result<()> {
+        if path.is_file() {
+            self.files.push(path.to_owned());
+            return Ok(());
+        }
 
-                        if path.ends_with(exclude) {
-                            return false
-                        }
+        for entry in fs::read_dir(path)?
+            .filter(|d| {
+                for exclude in vec!["target", ".git"] {
+                    let path = d.as_ref().unwrap().path();
+
+                    if path.ends_with(exclude) {
+                        return false
                     }
-                    return true
                 }
-            ) {
-                let path = entry?.path();
+                return true
+            }
+        ) {
+            let path = entry?.path();
+            println!("{:?}", path);
 
-                match path.is_dir() {
-                    true => self.scan(&path)?,
-                    false => self.files.push(path),
-                }
+            match path.is_dir() {
+                true => self.scan(&path)?,
+                false => self.files.push(path),
             }
         }
 
@@ -53,7 +57,7 @@ impl Counter {
     }
 
     pub fn count_files(&mut self) -> Result<usize> {
-        self.scan(&self.dir.clone())?;
+        self.scan(&self.path.clone())?;
         Ok(self.files.len())
     }
 }

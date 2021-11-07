@@ -8,9 +8,9 @@ use parser::Parser;
 
 fn main() {
     let parser = Parser::new();
-    let app = App::new(parser.jobs);
+    let app = App::new(parser.njobs);
 
-    let total = parser.path.iter().map(|p| {
+    let total = parser.paths.iter().map(|p| {
         match app.count(p) {
             Ok(count) => count,
             Err(e) => {

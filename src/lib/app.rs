@@ -56,7 +56,7 @@ impl App {
     /// let app = xloc::App::new(1);
     ///
     /// // Counts all files in the current dir.
-    /// match app.count(None) {
+    /// match app.count(".") {
     ///     Ok(count) => println!("{} lines", count),
     ///     Err(e) => println!("Error: {}", e),
     /// }
@@ -67,7 +67,7 @@ impl App {
     /// let app = xloc::App::new(12);
     ///
     /// // Counts all lines in `/project/src/main.rs`.
-    /// if let Ok(count) = app.count(Some("/project/src/main.rs")) {
+    /// if let Ok(count) = app.count("/project/src/main.rs") {
     ///     println!("{} lines", count);
     /// } else {
     ///     println!("Something went wrong.");
