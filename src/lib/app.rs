@@ -3,9 +3,8 @@ use std::sync::mpsc;
 use std::io::Result;
 use std::thread::JoinHandle;
 
-use super::counter;
-use super::threads;
-
+use super::counter::Counter;
+use super::threads::handle_in_thread;
 
 
 /// An Application used to count lines programmatically.
@@ -36,8 +35,7 @@ impl App {
     /// all files if a directory is passed to `path`.
     ///
     /// # Arguments
-    /// - `path` - The optional path to run this function against. If
-    /// [None], the path will be set to [std::env::current_dir].
+    /// - `path` - The path to run this function against.
     ///
     /// # Returns
     /// - Ok([usize]) - The total line count.
@@ -75,17 +73,12 @@ impl App {
     ///     println!("Something went wrong.");
     /// }
     /// ```
-    pub fn count(&self, path: Option<&str>) -> Result<usize> {
-        let mut target = path::PathBuf::new();
+    pub fn count(&self, path: &str) -> Result<usize> {
+        let target = path::PathBuf::from(path);
+        let mut counter = Counter::new(target);
         let mut position = 0;
         let mut total = 0;
 
-        match path {
-            Some(p) => target.push(p),
-            None => target.push(std::env::current_dir()?),
-        }
-
-        let mut counter = counter::Counter::new(target);
         let nfiles = counter.count_files()?;
         let workloads = counter.generate_workloads(self.njobs, nfiles)?;
         let files = counter.files;
@@ -96,7 +89,7 @@ impl App {
             let end = position + load;
             position = end;
 
-            threads::handle_in_thread(
+            handle_in_thread(
                 tx.clone(), files[start..end].to_vec()
             )
         }).collect::<Vec<JoinHandle<()>>>();

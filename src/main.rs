@@ -1,17 +1,24 @@
-use xloc::App;
 mod parser;
+
+use std::process;
+
+use xloc::App;
+use parser::Parser;
 
 
 fn main() {
-    let parser = parser::Parser::new();
+    let parser = Parser::new();
+    let app = App::new(parser.jobs);
 
-    if let Some(jobs) = parser.matches.value_of("jobs") {
-        let njobs = jobs.parse::<usize>().unwrap_or(1);
-        let app = App::new(njobs);
-
-        match app.count(None) {
-            Ok(count) => println!("{}", count),
-            Err(e) => println!("{}", e),
+    let total = parser.path.iter().map(|p| {
+        match app.count(p) {
+            Ok(count) => count,
+            Err(e) => {
+                println!("{}", e);
+                process::exit(1);
+            },
         }
-    }
+    }).sum::<usize>();
+
+    println!("{}", total);
 }
