@@ -14,12 +14,15 @@ pub struct App {
 
 
 impl App {
-    /// Creates a new `App`.
+    /// Creates a new xloc `App`.
     ///
     /// # Arguments
     ///
     /// - `njobs` - The number of jobs ([std::thread::Thread])
     /// the application should run on.
+    ///
+    /// # Returns
+    /// - [App] - The newly created xloc `App`.
     ///
     /// # Examples
     ///
@@ -38,8 +41,9 @@ impl App {
     /// - `path` - The path to run this function against.
     ///
     /// # Returns
-    /// - Ok([usize]) - The total line count.
-    /// - Err([std::io::Error]) - The error, if any.
+    ///
+    /// - [Result<usize, std::io::Error>] - The total line count or the
+    /// error, if any.
     ///
     /// # Note
     /// Currently skips over any files containing non `UTF-8` encoded
@@ -99,5 +103,51 @@ impl App {
         }
 
         Ok(total)
+    }
+
+    /// Sets the number of jobs ([std::thread::Thread]) the `App` should
+    /// use.
+    ///
+    /// # Arguments
+    ///
+    /// - `njobs` - The new number of jobs.
+    ///
+    /// # Returns
+    /// - [usize] - The new number of jobs.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// // Creates a new mutable `App` that uses 1 job.
+    /// let mut app = xloc::App::new(1);
+    ///
+    /// assert_eq!(app.get_njobs(), 1);
+    ///
+    /// // Sets the number of jobs to 6.
+    /// app.set_njobs(6);
+    ///
+    /// assert_eq!(app.get_njobs(), 6);
+    /// ```
+    pub fn set_njobs(&mut self, njobs: usize) -> usize {
+        self.njobs = njobs;
+        njobs
+    }
+
+    /// Gets the number of jobs ([std::thread::Thread]) the `App` is
+    /// currently set to use.
+    ///
+    /// # Returns
+    /// - [Result<usize>] - The current number of jobs.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// // Creates a new mutable `App` that uses 1 job.
+    /// let app = xloc::App::new(1);
+    ///
+    /// assert_eq!(app.get_njobs(), 1);
+    /// ```
+    pub fn get_njobs(&self) -> usize {
+        self.njobs
     }
 }
