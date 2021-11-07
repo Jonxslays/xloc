@@ -7,8 +7,15 @@ use super::counter::Counter;
 use super::threads::handle_in_thread;
 
 /// An Application used to count lines programmatically.
+#[derive(Debug, Clone, Copy, Hash)]
 pub struct App {
     njobs: usize,
+}
+
+impl Default for App {
+    fn default() -> Self {
+        Self { njobs: 1 }
+    }
 }
 
 impl App {
