@@ -22,6 +22,8 @@ at a later date.
 
 xloc supports Rust version 1.24.0 and greater.
 
+For more information, read the [API Reference](https://docs.rs/xloc).
+
 ---
 
 ### Installation
