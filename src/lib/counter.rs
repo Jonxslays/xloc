@@ -1,17 +1,18 @@
 use std::fs;
-use std::path::PathBuf;
 use std::io::Result;
-
+use std::path::PathBuf;
 
 pub struct Counter {
     pub path: PathBuf,
-    pub files: Vec<PathBuf>
+    pub files: Vec<PathBuf>,
 }
-
 
 impl Counter {
     pub fn new(path: PathBuf) -> Self {
-        Self { path, files: vec![] }
+        Self {
+            path,
+            files: vec![],
+        }
     }
 
     fn scan(&mut self, path: &PathBuf) -> Result<()> {
@@ -20,20 +21,17 @@ impl Counter {
             return Ok(());
         }
 
-        for entry in fs::read_dir(path)?
-            .filter(|d| {
-                for exclude in vec!["target", ".git"] {
-                    let path = d.as_ref().unwrap().path();
+        for entry in fs::read_dir(path)?.filter(|d| {
+            for exclude in vec!["target", ".git"] {
+                let path = d.as_ref().unwrap().path();
 
-                    if path.ends_with(exclude) {
-                        return false
-                    }
+                if path.ends_with(exclude) {
+                    return false;
                 }
-                return true
             }
-        ) {
+            return true;
+        }) {
             let path = entry?.path();
-            println!("{:?}", path);
 
             match path.is_dir() {
                 true => self.scan(&path)?,

@@ -8,7 +8,7 @@ readme = "README.md"
 homepage = "https://github.com/Jonxslays/xloc"
 repository = "https://github.com/Jonxslays/xloc"
 keywords = ["xloc", "lines", "count", "code"]
-categories = ["command-line-utilities", "Concurrency", "filesystem"]
+categories = ["command-line-utilities", "concurrency", "filesystem"]
 license = "BSD-3-Clause"
 include = ["src"]
 

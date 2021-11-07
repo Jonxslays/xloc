@@ -1,17 +1,15 @@
+use std::io::Result;
 use std::path;
 use std::sync::mpsc;
-use std::io::Result;
 use std::thread::JoinHandle;
 
 use super::counter::Counter;
 use super::threads::handle_in_thread;
 
-
 /// An Application used to count lines programmatically.
 pub struct App {
     njobs: usize,
 }
-
 
 impl App {
     /// Creates a new xloc `App`.
@@ -22,7 +20,7 @@ impl App {
     /// the application should run on.
     ///
     /// # Returns
-    /// - [App] - The newly created xloc `App`.
+    /// - [App] - The newly created `App`.
     ///
     /// # Examples
     ///
@@ -47,7 +45,7 @@ impl App {
     ///
     /// # Note
     /// Currently skips over any files containing non `UTF-8` encoded
-    /// strings, as well as the directories `target/*` and `.git/*`.
+    /// characters, as well as the directories `target` and `.git`.
     ///
     /// Please open an [issue](https://github.com/Jonxslays/xloc/issues)
     /// if you have suggestions for more directories to ignore by
@@ -59,7 +57,7 @@ impl App {
     /// // Runs in 1 thread.
     /// let app = xloc::App::new(1);
     ///
-    /// // Counts all files in the current dir.
+    /// // Counts lines in all files in the current dir and subdirs.
     /// match app.count(".") {
     ///     Ok(count) => println!("{} lines", count),
     ///     Err(e) => println!("Error: {}", e),
@@ -70,7 +68,7 @@ impl App {
     /// // Runs in 12 threads.
     /// let app = xloc::App::new(12);
     ///
-    /// // Counts all lines in `/project/src/main.rs`.
+    /// // Counts the lines in `/project/src/main.rs`.
     /// if let Ok(count) = app.count("/project/src/main.rs") {
     ///     println!("{} lines", count);
     /// } else {
@@ -88,15 +86,16 @@ impl App {
         let files = counter.files;
         let (tx, rx) = mpsc::channel();
 
-        let handles = workloads.iter().map(|load| {
-            let start = position;
-            let end = position + load;
-            position = end;
+        let handles = workloads
+            .iter()
+            .map(|load| {
+                let start = position;
+                let end = position + load;
+                position = end;
 
-            handle_in_thread(
-                tx.clone(), files[start..end].to_vec()
-            )
-        }).collect::<Vec<JoinHandle<()>>>();
+                handle_in_thread(tx.clone(), files[start..end].to_vec())
+            })
+            .collect::<Vec<JoinHandle<()>>>();
 
         for _ in handles {
             total += rx.recv().unwrap();

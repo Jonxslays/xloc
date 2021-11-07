@@ -1,7 +1,6 @@
 use std::path::PathBuf;
-use std::{fs, thread};
 use std::sync::mpsc;
-
+use std::{fs, thread};
 
 pub fn handle_in_thread(tx: mpsc::Sender<usize>, files: Vec<PathBuf>) -> thread::JoinHandle<()> {
     let handle = thread::spawn(move || {
