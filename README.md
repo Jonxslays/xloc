@@ -39,7 +39,7 @@ cargo install xloc
 ```toml
 # Cargo.toml
 [dependencies]
-xloc = "0.1.0"
+xloc = "^0.1"
 ```
 
 ---
