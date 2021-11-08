@@ -1,6 +1,6 @@
 use std::fs;
 use std::io::Result;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub struct Counter {
     pub path: PathBuf,
@@ -15,21 +15,22 @@ impl Counter {
         }
     }
 
-    fn scan(&mut self, path: &PathBuf) -> Result<()> {
+    fn scan(&mut self, path: &Path) -> Result<()> {
         if path.is_file() {
             self.files.push(path.to_owned());
             return Ok(());
         }
 
         for entry in fs::read_dir(path)?.filter(|d| {
-            for exclude in vec!["target", ".git"] {
+            for exclude in &["target", ".git"] {
                 let path = d.as_ref().unwrap().path();
 
                 if path.ends_with(exclude) {
                     return false;
                 }
             }
-            return true;
+
+            true
         }) {
             let path = entry?.path();
 
@@ -47,8 +48,8 @@ impl Counter {
         let remainder = nfiles % njobs;
         let mut workloads = vec![chunk_size; njobs];
 
-        for i in 0..remainder {
-            workloads[i] += 1;
+        for i in workloads.iter_mut().take(remainder) {
+            *i += 1;
         }
 
         Ok(workloads)
