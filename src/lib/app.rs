@@ -57,7 +57,7 @@ impl App {
     }
 
     /// Counts the lines/words in a file, or recursively counts the
-    /// lines in all files if a directory is passed to `path`.
+    /// lines/words in all files if a directory is passed to `path`.
     ///
     /// # Arguments
     /// - `path` - The path to run this function against.
