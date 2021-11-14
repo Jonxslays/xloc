@@ -22,7 +22,7 @@ impl Counter {
         }
 
         for entry in fs::read_dir(path)?.filter(|d| {
-            for exclude in &["target", ".git"] {
+            for exclude in ["target", ".git"] {
                 let path = d.as_ref().unwrap().path();
 
                 if path.ends_with(exclude) {
