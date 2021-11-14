@@ -36,6 +36,7 @@ impl Parser {
             );
 
         let matches = cli.get_matches();
+        let words = matches.is_present("words");
 
         let paths = matches
             .values_of("path")
@@ -48,11 +49,6 @@ impl Parser {
             .unwrap()
             .parse::<usize>()
             .unwrap_or(1);
-
-        let words = match matches.is_present("words") {
-            true => true,
-            false => false,
-        };
 
         Self {
             njobs,
