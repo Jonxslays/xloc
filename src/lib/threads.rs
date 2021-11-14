@@ -4,14 +4,10 @@ use std::{fs, thread};
 
 use regex::Regex;
 
-pub fn handle_in_thread(
-    tx: mpsc::Sender<usize>,
-    files: Vec<PathBuf>,
-    words: bool,
-) -> thread::JoinHandle<()> {
+pub fn handle_in_thread(tx: mpsc::Sender<usize>, files: Vec<PathBuf>, words: bool) {
     thread::spawn(move || {
         tx.send(handle(files, words)).unwrap();
-    })
+    });
 }
 
 pub fn handle(files: Vec<PathBuf>, words: bool) -> usize {
