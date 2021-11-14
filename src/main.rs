@@ -7,7 +7,7 @@ use xloc::App;
 
 fn main() {
     let parser = Parser::new();
-    let app = App::new(parser.njobs);
+    let app = App::new(parser.njobs, parser.words);
 
     let total = parser
         .paths

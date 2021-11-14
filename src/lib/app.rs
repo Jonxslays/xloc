@@ -10,11 +10,15 @@ use super::threads::{handle, handle_in_thread};
 #[derive(Debug, Clone, Copy, Hash)]
 pub struct App {
     njobs: usize,
+    words: bool,
 }
 
 impl Default for App {
     fn default() -> Self {
-        Self { njobs: 1 }
+        Self {
+            njobs: 1,
+            words: false,
+        }
     }
 }
 
@@ -35,8 +39,8 @@ impl App {
     /// // Creates a new App, that will use 2 threads.
     /// let app = xloc::App::new(2);
     /// ```
-    pub fn new(njobs: usize) -> Self {
-        Self { njobs }
+    pub fn new(njobs: usize, words: bool) -> Self {
+        Self { njobs, words }
     }
 
     /// Counts the lines in a file, or recursively counts the lines in
@@ -92,7 +96,7 @@ impl App {
         // Otherwise decrement njobs by 1 to save 1 job
         // for the main thread
         match self.njobs {
-            1 => return Ok(handle(counter.files)),
+            1 => return Ok(handle(counter.files, self.words)),
             _ => {
                 njobs = self.njobs - 1;
             }
@@ -112,7 +116,7 @@ impl App {
                 let end = position + load;
                 position = end;
 
-                handle_in_thread(tx.clone(), files[start..end].to_vec())
+                handle_in_thread(tx.clone(), files[start..end].to_vec(), self.words)
             })
             .collect::<Vec<JoinHandle<()>>>();
 

@@ -21,3 +21,4 @@ path = "src/lib/lib.rs"
 
 [dependencies]
 clap = "2.33.3"
+regex = "1.5.4"

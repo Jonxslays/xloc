@@ -3,7 +3,7 @@ use clap::{App, Arg};
 pub struct Parser {
     pub njobs: usize,
     pub paths: Vec<String>,
-    pub words: bool
+    pub words: bool,
 }
 
 impl Parser {
@@ -25,7 +25,7 @@ impl Parser {
                     .short("w")
                     .long("--words")
                     .help("If included, count words instead of lines")
-                    .takes_value(false)
+                    .takes_value(false),
             )
             .arg(
                 Arg::with_name("path")
@@ -54,6 +54,10 @@ impl Parser {
             false => false,
         };
 
-        Self { njobs, paths, words }
+        Self {
+            njobs,
+            paths,
+            words,
+        }
     }
 }
