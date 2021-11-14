@@ -6,7 +6,7 @@ use super::counter::Counter;
 use super::threads::{handle, handle_in_thread};
 
 /// An Application used to count lines programmatically.
-#[derive(Debug, Clone, Copy, Hash)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct App {
     njobs: usize,
     words: bool,
@@ -109,7 +109,7 @@ impl App {
         // Otherwise decrement njobs by 1 to save 1 job
         // for the main thread
         if self.njobs == 1 {
-            return Ok(self.adjust(handle(counter.files, self.words)));
+            return Ok(self.adjust(handle(counter.files, self.words), nfiles));
         } else {
             njobs = self.njobs - 1;
         }
@@ -132,7 +132,8 @@ impl App {
             handle_in_thread(tx.clone(), files[start..end].to_vec(), self.words);
         }
 
-        // Drop the final sender, so the receiver doesn't block the main thread
+        // Drop the final sender, so the receiver doesn't block the main
+        // thread
         drop(tx);
 
         // Receive the data from the threads
@@ -140,13 +141,14 @@ impl App {
             total += rcvd;
         }
 
-        Ok(self.adjust(total))
+        Ok(self.adjust(total, nfiles))
     }
 
-    fn adjust(&self, total: usize) -> usize {
-        // If we are counting lines, we need to add 1 to the result.
+    fn adjust(&self, total: usize, nfiles: usize) -> usize {
+        // If we are counting lines, we need to add 1 to the result for
+        // each file we counted.
         if !self.words {
-            return total + 1;
+            return total + nfiles;
         }
 
         total

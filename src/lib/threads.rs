@@ -15,7 +15,7 @@ pub fn handle(files: Vec<PathBuf>, words: bool) -> usize {
     let pattern;
 
     if words {
-        pattern = r"[a-zA-Z0-9]+";
+        pattern = r#"(\w?\\?['"]?\w+\\?['"]?(\w+)?)+"#;
     } else {
         pattern = r"\n";
     }
