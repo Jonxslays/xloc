@@ -71,7 +71,7 @@ use xloc::App;
 fn main() {
     // Create a mutable `App` using 1 job.
     let mut app = App::default();
-    assert_eq!(app.get_njobs(), 1)
+    assert_eq!(app.get_njobs(), 1);
 
     // Set the number of jobs to 12.
     app.set_njobs(12);
