@@ -4,7 +4,7 @@ use std::sync::mpsc;
 use std::thread::JoinHandle;
 
 use super::counter::Counter;
-use super::threads::handle_in_thread;
+use super::threads::{handle, handle_in_thread};
 
 /// An Application used to count lines programmatically.
 #[derive(Debug, Clone, Copy, Hash)]
@@ -85,11 +85,23 @@ impl App {
     pub fn count(&self, path: &str) -> Result<usize> {
         let target = path::PathBuf::from(path);
         let mut counter = Counter::new(target);
-        let mut position = 0;
-        let mut total = 0;
-
         let nfiles = counter.count_files()?;
-        let workloads = counter.generate_workloads(self.njobs, nfiles)?;
+        let njobs: usize;
+
+        // If only 1 job, no need to even create threads
+        // Otherwise decrement njobs by 1 to save 1 job
+        // for the main thread
+        match self.njobs {
+            1 => return Ok(handle(counter.files)),
+            _ => {
+                njobs = self.njobs - 1;
+            }
+        }
+
+        // Otherwise calculate thread loads and handle in threads
+        let mut total = 0;
+        let mut position = 0;
+        let workloads = counter.generate_workloads(njobs, nfiles)?;
         let files = counter.files;
         let (tx, rx) = mpsc::channel();
 
