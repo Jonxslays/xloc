@@ -14,6 +14,10 @@ pub struct App {
 }
 
 impl Default for App {
+    /// ```
+    /// // Creates a default App, that uses 1 thread and count lines.
+    /// let app = xloc::App::default();
+    /// ```
     fn default() -> Self {
         Self {
             njobs: 1,
@@ -30,29 +34,36 @@ impl App {
     /// - `njobs` - The number of jobs ([std::thread::Thread])
     /// the application should run on.
     ///
+    /// - `words` - If true, count words instead of lines.
+    ///
     /// # Returns
     /// - [App] - The newly created `App`.
     ///
     /// # Examples
     ///
     /// ```
-    /// // Creates a new App, that will use 2 threads.
-    /// let app = xloc::App::new(2);
+    /// // Creates a new App, that will use 2 threads and count words.
+    /// let app = xloc::App::new(2, true);
+    /// ```
+    ///
+    /// ```
+    /// // Creates a new App, that will use 12 thread and count lines.
+    /// let app = xloc::App::new(12, false);
     /// ```
     pub fn new(njobs: usize, words: bool) -> Self {
         Self { njobs, words }
     }
 
-    /// Counts the lines in a file, or recursively counts the lines in
-    /// all files if a directory is passed to `path`.
+    /// Counts the lines/words in a file, or recursively counts the
+    /// lines in all files if a directory is passed to `path`.
     ///
     /// # Arguments
     /// - `path` - The path to run this function against.
     ///
     /// # Returns
     ///
-    /// - [Result<usize, std::io::Error>] - The total line count or the
-    /// error, if any.
+    /// - [Result<usize, std::io::Error>] - The total line/word count or
+    /// the error, if any.
     ///
     /// # Note
     /// Currently skips over any files containing non `UTF-8` encoded
@@ -66,7 +77,7 @@ impl App {
     ///
     /// ```no_run
     /// // Runs in 1 thread.
-    /// let app = xloc::App::new(1);
+    /// let app = xloc::App::default();
     ///
     /// // Counts lines in all files in the current dir and subdirs.
     /// match app.count(".") {
@@ -76,12 +87,12 @@ impl App {
     /// ```
     ///
     /// ```no_run
-    /// // Runs in 12 threads.
-    /// let app = xloc::App::new(12);
+    /// // Runs in 12 threads, and counts words.
+    /// let app = xloc::App::new(12, true);
     ///
-    /// // Counts the lines in `/project/src/main.rs`.
+    /// // Counts the words in `/project/src/main.rs`.
     /// if let Ok(count) = app.count("/project/src/main.rs") {
-    ///     println!("{} lines", count);
+    ///     println!("{} words", count);
     /// } else {
     ///     println!("Something went wrong.");
     /// }
@@ -141,7 +152,7 @@ impl App {
     ///
     /// ```
     /// // Creates a new mutable `App` that uses 1 job.
-    /// let mut app = xloc::App::new(1);
+    /// let mut app = xloc::App::default();
     ///
     /// assert_eq!(app.get_njobs(), 1);
     ///
@@ -164,12 +175,64 @@ impl App {
     /// # Examples
     ///
     /// ```
-    /// // Creates a new mutable `App` that uses 1 job.
-    /// let app = xloc::App::new(1);
+    /// // Creates a new `App` that uses 3 jobs.
+    /// let app = xloc::App::new(3, false);
     ///
-    /// assert_eq!(app.get_njobs(), 1);
+    /// assert_eq!(app.get_njobs(), 3);
     /// ```
     pub fn get_njobs(&self) -> usize {
         self.njobs
+    }
+
+    /// Gets whether or not we are counting words, instead of lines.
+    ///
+    /// # Returns
+    /// - [bool] - Whether or not we are counting words.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// // Creates a new `App`.
+    /// let app = xloc::App::default();
+    ///
+    /// // By default, we do not count words.
+    /// assert_eq!(app.get_words(), false);
+    /// ```
+    ///
+    /// ```
+    /// // Creates a new `App` with 3 jobs, and words set to true.
+    /// let app = xloc::App::new(3, true);
+    ///
+    /// assert_eq!(app.get_words(), true);
+    /// ```
+    pub fn get_words(&self) -> bool {
+        self.words
+    }
+
+    /// Sets whether or not to count words, instead of lines.
+    ///
+    /// # Arguments
+    ///
+    /// - `value` - Whether or not to count words.
+    ///
+    /// # Returns
+    /// - [bool] - The updated state.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// // Creates a new mutable `App`.
+    /// let mut app = xloc::App::default();
+    ///
+    /// assert_eq!(app.get_words(), false);
+    ///
+    /// // Set words to true, so we will now count words.
+    /// app.set_words(true);
+    ///
+    /// assert_eq!(app.get_words(), true);
+    /// ```
+    pub fn set_words(&mut self, value: bool) -> bool {
+        self.words = value;
+        value
     }
 }
