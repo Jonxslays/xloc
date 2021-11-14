@@ -71,10 +71,10 @@ fn no_jobs_multiple_path_args() -> Result<(), Box<dyn std::error::Error>> {
 fn no_jobs_invalid_path() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("xloc")?;
 
-    cmd.arg("fake_dir")
-        .assert()
-        .failure()
-        .stdout(predicate::str::contains("No such file or directory"));
+    cmd.arg("fake_dir").assert().failure().stdout(
+        predicate::str::contains("No such file or directory")
+            .or(predicate::str::contains("cannot find the path specified")),
+    );
 
     Ok(())
 }

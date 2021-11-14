@@ -73,6 +73,25 @@ fn count_words_file() {
 }
 
 #[test]
+fn count_lines_dir_bad_path() {
+    let app = xloc::App::default();
+    let base_path = String::from("fake_dir");
+
+    let result = app.count(&base_path);
+    assert!(result.is_err());
+
+    let e = result.unwrap_err().to_string();
+
+    if e.contains("No such file or directory") {
+        return;
+    } else if e.contains("cannot find the path specified") {
+        return;
+    } else {
+        panic!("Error message didnt match!");
+    }
+}
+
+#[test]
 fn set_njobs() {
     let mut app = xloc::App::default();
     assert_eq!(app.get_njobs(), 1);
