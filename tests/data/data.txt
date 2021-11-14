@@ -1,0 +1,10 @@
+xloc testing essay
+
+Written Nov 14, 2021
+
+Our hopes are that this program can maintain an accurate word and line
+count, while providing an easy to use interface.
+
+The concurrency can hopefully help to keep this fast.
+
+Also, "If you ain't first you're last!".
