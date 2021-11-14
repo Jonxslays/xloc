@@ -3,28 +3,31 @@
 //! - A fast, multi-threaded line counting utility. xloc hopes to speed up
 //! in places where other tools slow down.
 //! - An easy to use API is available through `xloc::App` if you would
-//! like to count lines from within another Rust project.
+//! like to count lines/words from within another Rust project.
 //! - Simple and intuitive command line interface.
 //!
 //! ---
 //!
 //! #### Getting started from the command line
 //!
-//! ```sh
+//! ```bash
 //! ## Verify xloc is working.
-//! $ xloc --version
+//! xloc --version
 //!
 //! ## Get help.
-//! $ xloc --help
+//! xloc --help
 //!
-//! ## Recursively count lines in the current dir, with 12 jobs.
-//! $ xloc -j 12 .
+//! ## Count lines for all files in the current dir, with 1 job.
+//! xloc .
 //!
-//! ## Count lines in `test.txt`, with 1 job.
-//! $ xloc ./test.txt
+//! ## Count words for all files in the current dir with nproc jobs.
+//! xloc -wj $(nproc) .
 //!
-//! ## Count lines in `main.py` and the `scripts` dir, with 6 jobs.
-//! $ xloc -j 6 main.py scripts
+//! ## Count words for 1 file, with 1 job.
+//! xloc -w test.txt
+//!
+//! ## Count lines for all files in the src dir, with 6 jobs.
+//! xloc -j 6 src
 //! ```
 //!
 //! ## Getting started in your own project
