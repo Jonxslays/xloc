@@ -1,7 +1,6 @@
 use std::io::Result;
 use std::path;
 use std::sync::mpsc;
-use std::thread::JoinHandle;
 
 use super::counter::Counter;
 use super::threads::{handle, handle_in_thread};
@@ -17,6 +16,9 @@ impl Default for App {
     /// ```
     /// // Creates a default App, that uses 1 thread and count lines.
     /// let app = xloc::App::default();
+    ///
+    /// assert_eq!(app.get_njobs(), 1);
+    /// assert_eq!(app.get_words(), false);
     /// ```
     fn default() -> Self {
         Self {
@@ -106,36 +108,48 @@ impl App {
         // If only 1 job, no need to even create threads
         // Otherwise decrement njobs by 1 to save 1 job
         // for the main thread
-        match self.njobs {
-            1 => return Ok(handle(counter.files, self.words)),
-            _ => {
-                njobs = self.njobs - 1;
-            }
+        if self.njobs == 1 {
+            return Ok(self.adjust(handle(counter.files, self.words)));
+        } else {
+            njobs = self.njobs - 1;
         }
 
-        // Otherwise calculate thread loads and handle in threads
+        // Generate an even distribution of workloads
         let mut total = 0;
         let mut position = 0;
         let workloads = counter.generate_workloads(njobs, nfiles)?;
         let files = counter.files;
+
+        // Create a channel so threads can send data
         let (tx, rx) = mpsc::channel();
 
-        let handles = workloads
-            .iter()
-            .map(|load| {
-                let start = position;
-                let end = position + load;
-                position = end;
+        // Create a thread for each workload
+        for load in workloads {
+            let start = position;
+            let end = position + load;
+            position = end;
 
-                handle_in_thread(tx.clone(), files[start..end].to_vec(), self.words)
-            })
-            .collect::<Vec<JoinHandle<()>>>();
-
-        for _ in handles {
-            total += rx.recv().unwrap();
+            handle_in_thread(tx.clone(), files[start..end].to_vec(), self.words);
         }
 
-        Ok(total)
+        // Drop the final sender, so the receiver doesn't block the main thread
+        drop(tx);
+
+        // Receive the data from the threads
+        for rcvd in rx {
+            total += rcvd;
+        }
+
+        Ok(self.adjust(total))
+    }
+
+    fn adjust(&self, total: usize) -> usize {
+        // If we are counting lines, we need to add 1 to the result.
+        if !self.words {
+            return total + 1;
+        }
+
+        total
     }
 
     /// Sets the number of jobs ([std::thread::Thread]) the `App` should

@@ -22,7 +22,6 @@ pub fn handle(files: Vec<PathBuf>, words: bool) -> usize {
         pattern = r"[a-zA-Z0-9]+";
     } else {
         pattern = r"\n";
-        result += 1;
     }
 
     let rgx = Regex::new(pattern).unwrap();
