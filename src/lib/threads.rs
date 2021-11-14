@@ -16,14 +16,16 @@ pub fn handle_in_thread(
 
 pub fn handle(files: Vec<PathBuf>, words: bool) -> usize {
     let mut result = 0;
-    let rgx;
+    let pattern;
 
     if words {
-        rgx = Regex::new(r"[a-zA-Z0-9]+").unwrap();
+        pattern = r"[a-zA-Z0-9]+";
     } else {
-        rgx = Regex::new(r"\n").unwrap();
+        pattern = r"\n";
         result += 1;
     }
+
+    let rgx = Regex::new(pattern).unwrap();
 
     for file in files {
         if let Ok(s) = fs::read_to_string(file) {
