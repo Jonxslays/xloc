@@ -2,11 +2,13 @@ use assert_cmd::prelude::*;
 use predicates::prelude::*;
 use std::process::Command;
 
+const DATA_PATH: &'static str = "tests/data";
+
 #[test]
 fn no_jobs_valid_dir_lines() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("xloc")?;
 
-    cmd.arg("tests/data")
+    cmd.arg(DATA_PATH)
         .assert()
         .success()
         .stdout(predicate::str::contains("45"));
@@ -19,7 +21,7 @@ fn with_jobs_valid_dir_lines() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("xloc")?;
 
     cmd.arg("-j2")
-        .arg("tests/data")
+        .arg(DATA_PATH)
         .assert()
         .success()
         .stdout(predicate::str::contains("45"));
@@ -32,7 +34,7 @@ fn no_jobs_valid_dir_words() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("xloc")?;
 
     cmd.arg("-w")
-        .arg("tests/data")
+        .arg(DATA_PATH)
         .assert()
         .success()
         .stdout(predicate::str::contains("120"));
@@ -45,7 +47,7 @@ fn with_jobs_valid_dir_words() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("xloc")?;
 
     cmd.arg("-wj2")
-        .arg("tests/data")
+        .arg(DATA_PATH)
         .assert()
         .success()
         .stdout(predicate::str::contains("120"));
@@ -84,7 +86,7 @@ fn invalid_flag() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::cargo_bin("xloc")?;
 
     cmd.arg("--xxxyyyzzz")
-        .arg("tests/data")
+        .arg(DATA_PATH)
         .assert()
         .failure()
         .stderr(predicate::str::contains(

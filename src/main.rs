@@ -23,3 +23,13 @@ fn main() {
 
     println!("{}", total);
 }
+
+#[cfg(test)]
+mod main_tests {
+    use super::main;
+
+    #[test]
+    fn main_test() {
+        assert_eq!(main(), ());
+    }
+}

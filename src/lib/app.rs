@@ -252,3 +252,20 @@ impl App {
         value
     }
 }
+
+#[cfg(test)]
+mod app_tests {
+    use super::App;
+
+    #[test]
+    fn app_adjust_default() {
+        let app = App::default();
+        assert_eq!(app.adjust(10, 20), 30);
+    }
+
+    #[test]
+    fn app_adjust_new() {
+        let app = App::new(1, true);
+        assert_eq!(app.adjust(10, 20), 10);
+    }
+}
