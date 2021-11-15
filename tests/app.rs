@@ -1,5 +1,7 @@
 use xloc;
 
+const DATA_PATH: &'static str = "tests/data";
+
 #[test]
 fn default_app() {
     let app = xloc::App::default();
@@ -17,7 +19,7 @@ fn new_app() {
 #[test]
 fn count_lines_dir() {
     let app = xloc::App::default();
-    let base_path = String::from("tests/data");
+    let base_path = String::from(DATA_PATH);
 
     let result = app.count(&base_path);
     assert!(result.is_ok());
@@ -27,7 +29,7 @@ fn count_lines_dir() {
 #[test]
 fn count_words_dir() {
     let app = xloc::App::new(1, true);
-    let base_path = String::from("tests/data");
+    let base_path = String::from(DATA_PATH);
 
     let result = app.count(&base_path);
     assert!(result.is_ok());
@@ -37,7 +39,7 @@ fn count_words_dir() {
 #[test]
 fn count_lines_file() {
     let app = xloc::App::default();
-    let base_path = String::from("tests/data");
+    let base_path = String::from(DATA_PATH);
 
     // A vec containing tuples of file name and actual line count
     let data_vec = vec![("/data.py", 17), ("/data.rs", 17), ("/data.txt", 11)];
@@ -56,7 +58,7 @@ fn count_lines_file() {
 #[test]
 fn count_words_file() {
     let app = xloc::App::new(1, true);
-    let base_path = String::from("tests/data");
+    let base_path = String::from(DATA_PATH);
 
     // A vec containing tuples of file name and actual word count
     let data_vec = vec![("/data.py", 40), ("/data.rs", 36), ("/data.txt", 44)];
@@ -81,14 +83,12 @@ fn count_lines_dir_bad_path() {
     assert!(result.is_err());
 
     let e = result.unwrap_err().to_string();
+    let error_msgs = vec![
+        "cannot find the path specified",
+        "No such file or directory",
+    ];
 
-    if e.contains("No such file or directory") {
-        return;
-    } else if e.contains("cannot find the path specified") {
-        return;
-    } else {
-        panic!("Error message didnt match!");
-    }
+    assert!(e.contains(error_msgs[0]) | e.contains(error_msgs[1]));
 }
 
 #[test]

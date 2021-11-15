@@ -30,3 +30,44 @@ pub fn handle(files: Vec<PathBuf>, words: bool) -> usize {
 
     result
 }
+
+#[cfg(test)]
+mod threads_tests {
+    use std::sync::mpsc;
+    use std::{path::PathBuf, str::FromStr};
+
+    use super::handle;
+    use super::handle_in_thread;
+
+    #[test]
+    fn threads_handle_lines() {
+        let path = vec![PathBuf::from_str("tests/data/data.rs").unwrap()];
+        let result = handle(path, false);
+        assert_eq!(result, 16);
+    }
+
+    #[test]
+    fn threads_handle_words() {
+        let path = vec![PathBuf::from_str("tests/data/data.rs").unwrap()];
+        let result = handle(path, true);
+        assert_eq!(result, 36);
+    }
+
+    #[test]
+    fn threads_handle_in_thread_lines() {
+        let path = vec![PathBuf::from_str("tests/data/data.rs").unwrap()];
+        let (tx, rx) = mpsc::channel();
+        handle_in_thread(tx.clone(), path, false);
+        let result = rx.recv().unwrap();
+        assert_eq!(result, 16);
+    }
+
+    #[test]
+    fn threads_handle_in_thread_words() {
+        let path = vec![PathBuf::from_str("tests/data/data.rs").unwrap()];
+        let (tx, rx) = mpsc::channel();
+        handle_in_thread(tx.clone(), path, true);
+        let result = rx.recv().unwrap();
+        assert_eq!(result, 36);
+    }
+}

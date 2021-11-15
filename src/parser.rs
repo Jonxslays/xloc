@@ -32,7 +32,8 @@ impl Parser {
                     .help("The path or paths to parse")
                     .takes_value(true)
                     .multiple(true)
-                    .required(true),
+                    .required(true)
+                    .default_value("."),
             );
 
         let matches = cli.get_matches();
@@ -55,5 +56,30 @@ impl Parser {
             paths,
             words,
         }
+    }
+}
+
+#[cfg(test)]
+mod parser_tests {
+    use super::Parser;
+
+    #[test]
+    fn new_parser() {
+        let parser = Parser::new();
+        assert_eq!(parser.njobs, 1);
+        assert_eq!(parser.paths, vec!["."]);
+        assert_eq!(parser.words, false);
+    }
+
+    #[test]
+    fn mut_parser() {
+        let mut parser = Parser::new();
+        parser.njobs = 3;
+        parser.paths = vec!["tests/data".to_owned()];
+        parser.words = true;
+
+        assert_eq!(parser.njobs, 3);
+        assert_eq!(parser.paths, vec!["tests/data"]);
+        assert_eq!(parser.words, true);
     }
 }
